@@ -52,3 +52,4 @@ nav:
   - Phase 8 - Account Lifecycle and Identity Proofing: phases/phase-08-account-lifecycle-and-identity-proofing.md
   - Phase 9 - Reauthentication and Step-Up Authentication: phases/phase-09-reauthentication-and-step-up-authentication.md
   - Phase 10 - SAML Security: phases/phase-10-saml-security.md
+  - Phase 11 - Multi-Tenant Identity Isolation: phases/phase-11-multi-tenant-identity-isolation.md
