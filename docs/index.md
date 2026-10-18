@@ -27,8 +27,8 @@ Every phase ends with an **Assessment** section. Each question is followed by a 
 | 11 | [Multi-Tenant Identity Isolation](phases/phase-11-multi-tenant-identity-isolation.md) | Complete |
 | 12 | [Authentication Information Leakage](phases/phase-12-authentication-information-leakage.md) | Complete |
 | 13 | [Legacy Authentication Security](phases/phase-13-legacy-authentication-security.md) | Complete |
-| 14 | Federated Logout and Identity Persistence | In progress |
-| 15 | Authentication Logging and Monitoring | Not started |
+| 14 | [Federated Logout and Identity Persistence](phases/phase-14-federated-logout-and-identity-persistence.md) | Complete |
+| 15 | Authentication Logging and Monitoring | In progress |
 | 16 | Authentication Cryptographic Failures | Not started |
 | 17 | Authentication-Adjacent Authorization Flaws | Not started |
 

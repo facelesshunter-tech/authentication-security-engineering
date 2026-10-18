@@ -55,3 +55,4 @@ nav:
   - Phase 11 - Multi-Tenant Identity Isolation: phases/phase-11-multi-tenant-identity-isolation.md
   - Phase 12 - Authentication Information Leakage: phases/phase-12-authentication-information-leakage.md
   - Phase 13 - Legacy Authentication Security: phases/phase-13-legacy-authentication-security.md
+  - Phase 14 - Federated Logout and Identity Persistence: phases/phase-14-federated-logout-and-identity-persistence.md
