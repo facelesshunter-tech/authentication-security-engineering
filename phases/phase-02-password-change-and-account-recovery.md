@@ -555,17 +555,23 @@ Content-Type: application/json
 
 Alice receives a link containing `token=7f82c9a1...`. She opens it and submits a new password. Now imagine you successfully reset Alice's password, and the application does not visibly invalidate the reset token. Without immediately calling this a vulnerability, what specific test would you perform to determine whether reuse of the reset token creates an actual security issue?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 Test the token again after it has already been used successfully, and determine whether the server still accepts it. Also test it again after waiting past the token's intended lifetime, to separately establish whether expiration is functioning. These are two different security properties: single use and time limited validity, and a token can fail one while passing the other. If you reset Alice's password successfully and then immediately resubmit the same token with a different new password, and the server returns a success response again, you have obtained strong evidence of a reusable password reset token. That alone establishes a token management weakness, but not yet account takeover, the actual security impact still needs to be proven separately.
+
+</details>
 
 ### Assessment Question 2
 
 You reuse the token immediately and receive `HTTP/1.1 200 OK` with the message "Password reset successful." What would you test next to determine whether this is merely a token management weakness or whether it can actually lead to account takeover?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 Attempt to log in using the account's email and the password that was set through the reused token. If authentication succeeds, you have moved from "the token can be reused" to "the reused token actually changed the account's authentication credential," which is the distinction between finding a weakness and proving security impact. The full controlled sequence is: obtain a reset token, reset the password successfully, reuse the same token, reset the password again, log in using the second password, and confirm successful authentication. Do not call this account takeover solely because the password changed. A true account takeover finding requires establishing that an attacker who possesses the reset token can gain unauthorized control of the victim's account without requiring the legitimate user's cooperation, and successful authentication with the attacker selected password is strong evidence of exactly that capability. You should also check the session lifecycle afterward: if an old authenticated session remains valid after the password reset, that reveals an additional, separate security weakness.
+
+</details>
 
 ### Assessment Question 3
 
@@ -585,11 +591,14 @@ Content-Type: application/json
 
 You notice the server accepts an email value supplied by the client alongside the token. What security property would you investigate next, and what test would prove whether the server is actually using the attacker controlled email rather than binding the token to Alice's account?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 Investigate whether the reset token is cryptographically and logically bound to the account it is supposed to reset, or whether the server separately and independently trusts the client supplied email field. In a dangerous implementation, the token only proves that some reset is valid, while the email field is what actually tells the server which account to change. If the server does not verify that those two values belong together, an attacker who possesses a valid reset token could potentially manipulate the email parameter to reset a different account entirely.
 
 Using only controlled test accounts, take a reset token legitimately issued for one account, for example `alice@example.test`, and submit it together with a different, attacker controlled account's email, for example `attacker@example.test`, and a new password. A `200 OK` response alone does not prove anything, since the server might return success while internally rejecting the operation. The proof is behavioral: afterward, attempt to authenticate to the attacker controlled account using the new password that was submitted. If that authentication succeeds, you have demonstrated that the server changed the password of the account named in the client supplied email field rather than the account the token was actually issued for. That is a confirmed password reset account binding flaw, and it can lead to account takeover if an attacker is able to obtain a valid reset token usable in this way.
+
+</details>
 
 ### Assessment Question 4
 
@@ -618,11 +627,14 @@ Content-Type: application/json
 
 You also learn that users can normally obtain their `recoveryCode` from their account's security settings only after authenticating. Testing as an unauthenticated attacker, what is the single highest priority thing to investigate about this endpoint, and why?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 Investigate what authentication or security control is supposed to prevent an unauthenticated attacker from using this endpoint at all, since the recovery code is described as something a legitimate user can only obtain after already authenticating. The reasoning is that the primary reset token mechanism has already been shown to be secure, so the highest value question is not about that mechanism, it is about whether this second, apparently weaker, recovery path reintroduces the exact weakness the primary mechanism was designed to avoid. The first concrete test is to submit a known or guessed recovery code to this endpoint without being authenticated at all, and determine whether the endpoint actually requires any proof that the requester legitimately obtained that code through the authenticated settings page, or whether it accepts the code on its own.
 
 After receiving a `200 OK` with "Account recovered successfully," the response itself is evidence, not proof of impact. Attempt to authenticate using the email and the attacker selected new password. If login succeeds, you have moved from "the endpoint appears vulnerable" to "an unauthenticated attacker can reset another user's password and authenticate as that user," which is a demonstrated authentication bypass and potential account takeover. You should also determine the root cause behind why it worked: whether the recovery code was predictable, whether it was not actually required to be verified at all, whether it was accepted without proper account binding, whether a code belonging to one account could be used against a different account, whether the code was obtainable without authentication in the first place, and more generally whether this recovery mechanism is weaker than the application's primary password reset mechanism.
+
+</details>
 
 ### Assessment Question 5
 
@@ -642,11 +654,14 @@ Content-Type: application/json
 
 and receive `HTTP/1.1 200 OK` with "Account recovered successfully." What would you do next to determine whether this is a real cross account authentication flaw, and what underlying security property are you actually testing?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 Take a recovery code that is legitimately associated with one account, Alice's, and deliberately pair it with a different account's identifier, Bob's, then verify whether Bob's password actually changed. The verification step is to attempt to authenticate as Bob using the attacker selected password. If the code belongs to Alice, is used against Bob, Bob's password changes, and you can then authenticate as Bob, you have demonstrated a cross account recovery code binding flaw, potentially resulting in account takeover. A single controlled cross account success is sufficient to prove the core flaw; testing many additional accounts is not required to establish that the vulnerability exists, once one has been confirmed with proof of changed credentials and successful authentication.
 
 The underlying security property being tested is not merely whether different email values happen to work. It is that a recovery credential must be cryptographically and logically bound to exactly one account, and must not be interchangeable between accounts. This is the same account binding principle introduced in Lesson 2.4 for password reset tokens, applied here to a different recovery mechanism, which is exactly why a strong security review of recovery functionality must check every recovery path an application exposes, not only the one it labels as the main password reset flow.
+
+</details>
 
 ## Remediation and Secure Implementation
 

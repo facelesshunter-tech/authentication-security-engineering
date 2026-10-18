@@ -1,0 +1,57 @@
+site_name: Authentication Security Engineering
+site_description: A practitioner's course on authentication security, written from the perspective of a senior application security engineer and bug bounty hunter.
+site_url: https://facelesshunter-tech.github.io/authentication-security-engineering/
+repo_url: https://github.com/facelesshunter-tech/authentication-security-engineering
+repo_name: facelesshunter-tech/authentication-security-engineering
+edit_uri: edit/main/
+
+docs_dir: docs
+site_dir: site
+use_directory_urls: false
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+
+markdown_extensions:
+  - admonition
+  - tables
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - Phase 1 - Password Storage and Credential Attacks: phases/phase-01-password-storage-and-credential-attacks.md
+  - Phase 2 - Password Change and Account Recovery: phases/phase-02-password-change-and-account-recovery.md
+  - Phase 3 - Multifactor Authentication (MFA) Attacks: phases/phase-03-multifactor-authentication-mfa-attacks.md
+  - Phase 4 - MFA Enrollment and Recovery Vulnerabilities: phases/phase-04-mfa-enrollment-and-recovery-vulnerabilities.md
+  - Phase 5 - Passkeys, WebAuthn, and FIDO2: phases/phase-05-passkeys-webauthn-and-fido2.md

@@ -484,7 +484,8 @@ HTTP/1.1 200 OK
 
 The normal flow is password login, then OTP verification, then an authenticated session, then the dashboard. Without assuming there is a vulnerability, what is the single most important first test to perform to determine whether OTP verification actually protects access to the dashboard?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 The single highest priority test is to try to access protected resources without completing OTP verification at all, using the pending session that only reflects a verified password. For example:
 
@@ -496,21 +497,29 @@ Cookie: session=pending_8af31
 
 The core security question is not initially "can the OTP be reused" or "can the OTP work for another account," even though both are legitimate follow-up hypotheses. The priority question is whether the application actually enforces the authentication state before granting access to protected functionality at all. If the server responds `200 OK` with account data, that is a major finding, because a supposedly pending session already has access to protected functionality. If the server responds `403 Forbidden` with an error such as "MFA verification required," then the OTP state is being enforced at that endpoint. A senior tester isolates one security property at a time rather than testing OTP reuse, cross-account binding, and state enforcement simultaneously. The underlying question to keep asking is: what security state does the server believe the requester is in, and does every sensitive endpoint enforce that state?
 
+</details>
+
 ### Assessment Question 2
 
 Suppose `GET /dashboard` with `Cookie: session=pending_8af31` correctly returns `302 Found` with `Location: /verify-otp`, confirming that the dashboard page itself redirects to MFA. What would you test next to determine whether the application has a real, centrally enforced MFA mechanism rather than merely protecting this one URL?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 Look for alternate routes and APIs that might supply the same functionality without the same check, since the real question is whether MFA is enforced centrally or whether each endpoint implements its own check independently. Specific categories to investigate include the underlying API endpoints that supply data to protected pages, such as `/api/account`, `/api/profile`, `/api/transactions`, `/api/settings`, `/api/payments`, and `/api/beneficiaries`; alternate web routes such as `/settings`, `/profile`, `/account`, and `/transactions`; different HTTP methods on the same route, since an application might protect `GET /api/profile` but forget the identical check on `PUT /api/profile`; and legacy or alternate authentication endpoints such as `/api/v1/...`, `/api/v2/...`, `/mobile/...`, or `/legacy/...`. If every sensitive endpoint independently decides whether a session is authenticated, inconsistent enforcement becomes much more likely, because a single centrally enforced check is far harder to accidentally omit than dozens of endpoint-specific checks.
+
+</details>
 
 ### Assessment Question 3
 
 You discover that `GET /api/account` with `Cookie: session=pending_8af31` (a password-authenticated but MFA-incomplete session) returns `200 OK` with account data including a balance. Without stating a severity yet, what is the security flaw and the broken security assumption here, and what would you test next before concluding this is a confirmed MFA bypass?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 The flaw is an authentication-state inconsistency: the pending session, which should only reflect a verified password and an incomplete MFA step, is being treated by this particular endpoint as sufficiently authenticated to return protected account data. The broken assumption is that session existence or password verification alone is equivalent to the full authentication assurance the application's policy requires for protected functionality. However, evidence of this inconsistency is not automatically proof of an MFA bypass. The response needs further investigation along three lines: first, determine exactly what the endpoint allows, since reading limited account information may be an intentional, low-risk design decision for a pre-MFA state; second, test security-sensitive functionality specifically, for example whether the pending session can initiate a transfer, modify account settings, add a beneficiary, or change authentication factors, using only controlled test data; and third, check consistency across the attack surface, since `/api/account` might allow limited access while `/api/transactions` or `/api/settings` correctly requires MFA. The deeper question to resolve is what the pending session actually authorizes, and whether that authorization is consistent with the application's intended MFA state. The `200 OK` response is evidence worth investigating, it is not by itself sufficient to establish an MFA bypass. If you eventually demonstrate that a password-authenticated-but-MFA-pending session can perform an action that the application's security model requires MFA to protect, you have established the vulnerability.
+
+</details>
 
 ### Assessment Question 4
 
@@ -528,17 +537,23 @@ Cookie: session_id=ALICE
 
 You submit 20 incorrect codes and all 20 return `400 Bad Request`. There is no CAPTCHA, no lockout, no visible delay, no `429`, and no indication of attempt limits. Would you immediately report this as an "OTP brute-force vulnerability"? Explain why or why not.
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 No, not immediately. Observing 20, 100, or even 1000 requests with no `429` proves only that there may be insufficient rate limiting. It does not yet prove that OTP brute force is practically exploitable. A 6-digit OTP has up to 1,000,000 possible codes, so the determining factor is whether an attacker can realistically make enough attempts before the OTP expires or becomes invalid. An OTP with a 5-minute lifetime, unlimited attempts, and an achievable rate of 100 attempts per second is a dramatically different risk than an OTP with a 30-second lifetime, unlimited attempts, and a rate of 2 attempts per second. The senior testing sequence is: determine whether the OTP has an effective attempt limit, test whether repeated guesses are accepted, check for rate limiting, lockout, expiration, and attempt counters, and then assess whether the attacker can realistically guess the correct code within the OTP's lifetime and whether successful verification unlocks something sensitive. Only if the answer to that combined question is yes do you have a strong OTP brute-force vulnerability. It is also important to test limits per account or per phone number, not just per IP address, since an attacker may otherwise distribute requests across IPs to bypass an IP-based limit entirely.
+
+</details>
 
 ### Assessment Question 5
 
 Alice requests an OTP, `OTP_A = 483921`. She then requests another, `OTP_B = 716204`, and the application says "a new verification code has been sent." You test `OTP_A` against the verification endpoint and receive `400 Invalid verification code`. You then test `OTP_B` and receive `200 Verified`. So far everything looks correct. What would you test next to determine whether the application correctly invalidates old OTPs across the entire verification flow?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 Use the same phone number and account and submit the old code, `OTP_A`, again, to establish whether a previously superseded OTP remains permanently invalid once a newer OTP has been issued, rather than merely being invalid because `OTP_B` happened to be entered afterward. The expected secure behavior is that `OTP_A` is rejected and `OTP_B` is accepted, every time, including on repeated attempts. If `OTP_A` is ever accepted later, that indicates a stale OTP or token lifecycle flaw, distinct from the OTP-to-phone-number binding question. Testing `OTP_A` against a different phone number entirely tests a different security property, namely whether an OTP is properly bound to the account or number it was issued for, which is a valid test but not the one this scenario is asking about. These should be kept as separate, clearly labeled test cases: old OTP used after a new OTP is issued tests OTP invalidation and lifecycle; an OTP used against a different account or number tests OTP-to-account binding; many guesses against the same OTP tests brute-force resistance; and an OTP used after its expiration time tests expiration enforcement. Each of these is a distinct security property, and conflating them produces an imprecise finding even when the underlying test instinct is correct.
+
+</details>
 
 ## Remediation and Secure Implementation
 

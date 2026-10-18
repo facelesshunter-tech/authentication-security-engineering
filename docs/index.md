@@ -1,0 +1,35 @@
+# Authentication Security Engineering
+
+A practitioner's course on authentication security, written from the perspective of a senior application security engineer and bug bounty hunter. Each phase walks through a specific area of authentication, the ways it fails in practice, how to test for those failures safely and with evidence, and how to fix them, with real HTTP requests, real code, and a worked assessment at the end of every phase.
+
+This site is a companion to the [GitHub repository](https://github.com/facelesshunter-tech/authentication-security-engineering), which remains the canonical source. Every page on this site is generated directly from the Markdown files in that repository.
+
+## How to use this course
+
+Work through the phases in order. Later phases build on vocabulary and principles established earlier, particularly the recurring distinction between offline attacks, online attacks, and credential lifecycle weaknesses introduced in Phase 1, and the principle that a weaker recovery or fallback path can defeat an otherwise strong primary authentication mechanism, which reappears in a different form in nearly every phase after it.
+
+Every phase ends with an **Assessment** section. Each question is followed by a collapsed **Reveal Answer** block, work through the question yourself first, then click to check your reasoning against the answer.
+
+## Course progress
+
+| Phase | Title | Status |
+|---|---|---|
+| 1 | [Password Storage and Credential Attacks](phases/phase-01-password-storage-and-credential-attacks.md) | Complete |
+| 2 | [Password Change and Account Recovery](phases/phase-02-password-change-and-account-recovery.md) | Complete |
+| 3 | [Multifactor Authentication (MFA) Attacks](phases/phase-03-multifactor-authentication-mfa-attacks.md) | Complete |
+| 4 | [MFA Enrollment and Recovery Vulnerabilities](phases/phase-04-mfa-enrollment-and-recovery-vulnerabilities.md) | Complete |
+| 5 | [Passkeys, WebAuthn, and FIDO2](phases/phase-05-passkeys-webauthn-and-fido2.md) | Complete |
+| 6 | Cookie and Session Security | In progress |
+| 7 | OAuth 2.0 and OpenID Connect Security | Not started |
+| 8 | Account Lifecycle and Identity Proofing | Not started |
+| 9 | Reauthentication and Step-Up Authentication | Not started |
+| 10 | SAML Security | Not started |
+| 11 | Multi-Tenant Identity Isolation | Not started |
+| 12 | Authentication Information Leakage | Not started |
+| 13 | Legacy Authentication Security | Not started |
+| 14 | Federated Logout and Identity Persistence | Not started |
+| 15 | Authentication Logging and Monitoring | Not started |
+| 16 | Authentication Cryptographic Failures | Not started |
+| 17 | Authentication-Adjacent Authorization Flaws | Not started |
+
+This table, and the navigation on the left, will be replaced by the full curriculum index once every phase is complete.

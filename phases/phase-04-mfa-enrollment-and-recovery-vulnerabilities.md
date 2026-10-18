@@ -463,17 +463,23 @@ Cookie: session_id=ALICE_SESSION
 
 She scans the QR code and submits a confirmation code, and the application responds `{"mfa_enabled": true}`. As an AppSec tester, what would you investigate about this MFA enrollment flow before concluding that MFA is actually protecting Alice's account?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 The question this scenario is primarily testing is not MFA expiration. It is what authentication proof is required before someone can enroll or replace an MFA factor at all. Specifically, investigate whether an attacker who somehow obtains Alice's already-authenticated session, without knowing her password, without an existing MFA factor, and without any other strong authentication proof, can simply call `POST /api/mfa/enable` and enroll their own authenticator. If that succeeds, the attacker ends up controlling the MFA device trusted for Alice's account, and every future login requires the attacker's authenticator rather than a factor Alice controls. That is a substantially more serious finding than an expiration issue, because it establishes persistent, attacker-controlled access rather than a one-time bypass. The property being tested is that MFA enrollment and factor change must be strongly authenticated and properly bound to the account owner, and this applies equally to MFA replacement: can someone remove Alice's existing MFA device and replace it with their own using only a normal authenticated session? That is a classic account-takeover path.
+
+</details>
 
 ### Assessment Question 2
 
 Continuing the same scenario: if Alice is already logged in with only her password, what additional authentication would you want the application to require before allowing her to enroll a new MFA device?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 Require reauthentication with Alice's existing strong credential, meaning her password at minimum, before allowing enrollment, replacement, or disabling of MFA. The expected sequence is: an existing authenticated session requests MFA enrollment, the application requires reauthentication, and only then is the new MFA factor enrolled. However, MFA security should not be reduced to only "ask for the password" as a universal answer. Depending on the application's threat model, the strongest design may also require verification through an existing MFA factor or another step-up authentication mechanism, not password reauthentication alone. The attack path this defends against is: an attacker obtains Alice's normal session, calls the enrollment endpoint, enrolls their own authenticator, and later authenticates as Alice. If the application allows that sequence without appropriate step-up authentication, that is a potentially serious MFA enrollment flaw.
+
+</details>
 
 ### Assessment Question 3
 
@@ -496,11 +502,14 @@ Cookie: session_id=ALICE_SESSION
 
 Now imagine an attacker has a valid authenticated session for Alice's account but does not know her password. What would you test, and what security property are you trying to establish?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 The obvious secure behavior is that a wrong or missing password on `/api/mfa/disable` leaves MFA enabled and rejects the request, and confirming that is necessary but not sufficient. The real test is whether the application has another route around that protection. Look for alternative endpoints that disable or replace MFA without requiring the existing authentication factor, for example `/api/mfa/remove`, `/api/mfa/reset`, `/api/mfa/recovery`, `/api/account/security`, or `/api/account/recovery`. The question to answer for each one is: can my authenticated session disable or replace Alice's MFA without proving that I am actually Alice? If any of them allow that, the attacker's path is: stolen session, disable MFA through the weaker endpoint, MFA no longer required, attempt account takeover. The security property being tested is that MFA must not be bypassable through weaker account-management or recovery endpoints, which means testing the entire authentication state machine, not only the obvious MFA endpoint. A strong MFA implementation can have perfect enforcement at `/login` and still be vulnerable because a reset or recovery endpoint quietly removes the protection elsewhere.
 
 If such an endpoint exists and allows an authenticated session to remove MFA without a password, existing MFA, or another strong recovery proof, the precise classification of the underlying flaw is MFA bypass through an insufficiently protected MFA reset or recovery endpoint, or more generally, an authentication state-machine flaw caused by inconsistent MFA enforcement. A description like "improper implementation of authentication security across other endpoints" identifies the situation but is too broad for a senior-level finding; the report should name the specific failure. The reason this classification matters is that the main login flow correctly requires password plus MFA, but a separate endpoint effectively allows valid session plus one request to remove MFA entirely, meaning the attacker never has to defeat MFA directly, they simply remove the control through another path. Authentication testing must therefore cover the entire state machine: login, MFA, MFA enrollment, MFA change, MFA disable, MFA recovery, password reset, and account recovery, since every transition needs appropriate authentication.
+
+</details>
 
 ### Assessment Question 4
 
@@ -522,17 +531,23 @@ POST /api/mfa/recovery
 
 The recovery link allows the user to disable MFA and set up a new authenticator. What would you investigate about the recovery token before testing anything else?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 Investigate the recovery token's complete set of security properties: unpredictability, meaning whether it can be guessed; expiration, meaning whether it stops being valid after a defined period; single-use, meaning whether it can be reused after successful redemption; account binding, meaning whether it is tied specifically to Alice's account rather than usable against another account; revocation, meaning whether requesting a new recovery token invalidates the old one; and privilege, meaning exactly what possession of the token alone allows, specifically whether it is sufficient on its own to remove or replace MFA. The single most important question underlying all of these is whether possession of the recovery token provides enough proof to legitimately replace Alice's MFA, or whether the recovery flow itself can be abused to bypass MFA entirely.
+
+</details>
 
 ### Assessment Question 5
 
 You obtain a valid MFA recovery token for your own controlled test account, and notice it is only 6 digits, formatted as `RECOVERY-482913`. What would you test first, and what are you trying to determine?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 Given that the token is only 6 digits, the first priority is guessability and brute-force resistance, since a 6-digit numeric space is small enough that unlimited guessing becomes a realistic concern. Determine whether there are effective limits in place, such as attempt limits, rate limiting, lockout behavior, token expiration, and per-account throttling. Critically, determine whether a successfully guessed token actually allows MFA removal or replacement, and therefore account takeover, because the value of this test is not proving the token is short, it is proving the complete chain: a weak recovery token can be guessed, guessing it allows MFA to be removed or replaced, the attacker then authenticates using their own factor, and the result is account takeover. The full set of properties worth testing on any recovery token, beyond just this scenario, remains unpredictability, expiration, single-use, account binding, revocation, and privilege, and a six-digit numeric format specifically elevates the priority of the unpredictability property above the others.
+
+</details>
 
 ## Remediation and Secure Implementation
 

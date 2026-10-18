@@ -442,11 +442,14 @@ You submit 100 incorrect passwords for the same account. Every request returns 4
 
 Does the fact that all 100 requests return 401 prove that the application has no rate limiting? What additional evidence would you need before reporting this as a vulnerability?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 No, 100 consecutive accepted incorrect attempts does not conclusively prove that rate limiting is absent, even though it is suspicious evidence of inadequate protection. Rate limiting might activate only after 100 attempts, might apply per IP address rather than per account, might apply per account rather than per IP, might return 429 Too Many Requests only after a threshold is crossed, or might introduce delays without outright blocking requests. Before concluding that rate limiting is missing, you need to continue testing past the point you stopped at, and observe whether a threshold eventually triggers a 429 response, an account restriction, or a progressive delay.
 
 It is also important to distinguish three related but separate concepts: brute force is trying many passwords against one account, credential stuffing is trying previously exposed username and password combinations, and rate limiting is the control that restricts how frequently authentication attempts can occur. You do not need to perform credential stuffing with a leaked wordlist to test whether rate limiting works. For an authorized assessment, a controlled, bounded series of repeated invalid attempts against your own test account is sufficient evidence.
+
+</details>
 
 ### Assessment Question 2
 
@@ -461,13 +464,16 @@ Attempt 101: 429 Too Many Requests
 
 Would you report this as a missing rate limiting vulnerability? Explain your reasoning, considering whether the protection is effective rather than simply whether it exists.
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 No, this would not be reported as a missing rate limiting vulnerability, because rate limiting clearly exists here: the application allows 100 attempts and then blocks the 101st. The presence of a threshold is not in question.
 
 The more senior question is whether that threshold is secure, and that depends on the application's risk profile, the sensitivity of the protected account, the realistic attack conditions, and any additional protections in place. There is no universally correct number of permitted attempts. A banking application protecting high value accounts might need a far lower threshold than a low risk consumer application. Before drawing a conclusion about whether 100 attempts is an adequate threshold, you would need to understand the application's threat model, whether the limit is enforced per account, per source, or both, and whether other compensating controls exist, such as multi factor authentication on the account.
 
 A related, equally important question is whether the control can be bypassed, which is addressed in the next assessment question.
+
+</details>
 
 ### Assessment Question 3
 
@@ -508,13 +514,16 @@ Retry-After: 300
 
 However, when the forwarding header changes, the counter appears to reset. What is your primary vulnerability hypothesis, and what specific evidence would you collect to distinguish a genuine proxy trust misconfiguration from an intentionally supported proxy configuration?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 The primary hypothesis is that the application's rate limiter is identifying the client by trusting the client supplied `X-Forwarded-For` header rather than by using a value the server can actually verify. If so, the rate limiting state can be bypassed simply by changing that header, because the application is using attacker controlled client identity data to decide which rate limit bucket a request belongs to.
 
 To establish this as a real finding rather than a theoretical observation, you need controlled evidence using your own test account. The sequence is: using one claimed identity, repeatedly fail login until you receive 429 Too Many Requests. Then, using the same test account but a different `X-Forwarded-For` value, observe whether the requests become 401 again rather than remaining blocked. Repeat with several controlled header values and confirm the behavior is consistent. If the counter resets every time the header changes, you have demonstrated something considerably stronger than "the X-Forwarded-For header exists." You have demonstrated that the authentication rate limiter trusts attacker controlled client identity data, which allows the rate limit state to be bypassed entirely.
 
 One important refinement is necessary for precision. `X-Forwarded-For` can legitimately be trusted when the application sits behind a correctly configured, trusted reverse proxy or load balancer that itself controls and sanitizes the header before the request reaches the application. The actual vulnerability is specifically the application blindly trusting a client controlled forwarding header in circumstances where the client can reach the application directly, without a trusted proxy guaranteeing that the header's value is accurate. Distinguishing the two requires confirming, through the application's deployment architecture, whether an untrusted client can actually reach the authentication endpoint without passing through the trusted proxy that is supposed to set that header.
+
+</details>
 
 ## Remediation and Secure Implementation
 

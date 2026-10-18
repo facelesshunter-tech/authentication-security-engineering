@@ -362,21 +362,27 @@ async def authenticate_with_passkey(credential_id, signature):
 
 Is this a complete and acceptable WebAuthn authentication implementation? Identify specifically what is missing, and explain why finding this code alone is not sufficient evidence of a vulnerability.
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 No, this is incomplete as a WebAuthn implementation. The function does not visibly validate the challenge, the origin, the relying-party ID hash, required authenticator flags, or other protocol requirements, and it hides what data is actually signed. A real implementation must validate the complete WebAuthn assertion, not merely verify an isolated signature, because signature validation is only one of several required checks; the server must also establish that the credential is registered, that it belongs to the account or login context being authenticated, that the challenge and ceremony context are correct, that the origin and relying-party ID context are correct, that required flags and policy conditions are satisfied, and that the credential has not been revoked.
 
 However, finding this function alone does not prove a vulnerability exists. In a real application, the omitted checks might be implemented in a dedicated WebAuthn library or an earlier validation layer that this particular snippet simply does not show. A reviewer must inspect the complete call path, from the HTTP handler through the WebAuthn library and back, before concluding that the application genuinely accepts assertions without validating these properties. Prefer using an established, well-maintained WebAuthn library rather than implementing verification from scratch, since the protocol is sufficiently complex that a custom implementation creates unnecessary risk. Using a library does not guarantee security on its own if the application ignores its validation errors or supplies the wrong expected origin, challenge, or relying-party ID.
 
+</details>
+
 ### Assessment Question 2
 
 Continuing the same scenario in a fictional cloud-storage service: you have confirmed, by tracing the complete call path, that the server genuinely does not validate the challenge, origin, relying-party ID hash, or authenticator flags, and accepts any correctly signed assertion from a known credential. What is the resulting impact, and what would a complete remediation recommendation include?
 
-**Answer**
+<details markdown="1">
+<summary><strong>Reveal Answer</strong></summary>
 
 The impact depends on what the missing validation actually allows an attacker to do, and this must be established rather than assumed. If the server accepts assertions without validating essential WebAuthn properties, investigate specifically whether an attacker can use that flaw to authenticate as another user, for example by replaying a previously captured, mathematically valid signature outside its intended ceremony, or by exploiting the absence of origin and relying-party checks to accept an assertion that should have been scoped to a different context. Do not claim an account-takeover vulnerability based solely on a truncated code fragment; the claim must be backed by a demonstrated authentication bypass against a controlled test credential.
 
 A complete remediation recommendation is to replace the custom verification logic with a maintained WebAuthn implementation, and to ensure the application correctly configures the expected origin, relying-party ID, and challenge values and enforces every required validation outcome rather than treating a successful signature check as sufficient on its own. Beyond the immediate fix, registration, authentication, revocation, and recovery should each be tested as separate security boundaries, since a correct authentication ceremony does not imply that enrollment, credential revocation, or account recovery are equally well protected.
+
+</details>
 
 ## Remediation and Secure Implementation
 
