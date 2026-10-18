@@ -23,8 +23,8 @@ Every phase ends with an **Assessment** section. Each question is followed by a 
 | 7 | [OAuth 2.0 and OpenID Connect Security](phases/phase-07-oauth-2-0-and-openid-connect-security.md) | Complete |
 | 8 | [Account Lifecycle and Identity Proofing](phases/phase-08-account-lifecycle-and-identity-proofing.md) | Complete |
 | 9 | [Reauthentication and Step-Up Authentication](phases/phase-09-reauthentication-and-step-up-authentication.md) | Complete |
-| 10 | SAML Security | In progress |
-| 11 | Multi-Tenant Identity Isolation | Not started |
+| 10 | [SAML Security](phases/phase-10-saml-security.md) | Complete |
+| 11 | Multi-Tenant Identity Isolation | In progress |
 | 12 | Authentication Information Leakage | Not started |
 | 13 | Legacy Authentication Security | Not started |
 | 14 | Federated Logout and Identity Persistence | Not started |
