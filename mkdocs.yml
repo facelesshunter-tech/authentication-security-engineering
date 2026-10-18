@@ -54,3 +54,4 @@ nav:
   - Phase 10 - SAML Security: phases/phase-10-saml-security.md
   - Phase 11 - Multi-Tenant Identity Isolation: phases/phase-11-multi-tenant-identity-isolation.md
   - Phase 12 - Authentication Information Leakage: phases/phase-12-authentication-information-leakage.md
+  - Phase 13 - Legacy Authentication Security: phases/phase-13-legacy-authentication-security.md
