@@ -19,8 +19,8 @@ Every phase ends with an **Assessment** section. Each question is followed by a 
 | 3 | [Multifactor Authentication (MFA) Attacks](phases/phase-03-multifactor-authentication-mfa-attacks.md) | Complete |
 | 4 | [MFA Enrollment and Recovery Vulnerabilities](phases/phase-04-mfa-enrollment-and-recovery-vulnerabilities.md) | Complete |
 | 5 | [Passkeys, WebAuthn, and FIDO2](phases/phase-05-passkeys-webauthn-and-fido2.md) | Complete |
-| 6 | Cookie and Session Security | In progress |
-| 7 | OAuth 2.0 and OpenID Connect Security | Not started |
+| 6 | [Cookie and Session Security](phases/phase-06-cookie-and-session-security.md) | Complete |
+| 7 | OAuth 2.0 and OpenID Connect Security | In progress |
 | 8 | Account Lifecycle and Identity Proofing | Not started |
 | 9 | Reauthentication and Step-Up Authentication | Not started |
 | 10 | SAML Security | Not started |

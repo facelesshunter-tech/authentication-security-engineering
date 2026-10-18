@@ -55,3 +55,4 @@ nav:
   - Phase 3 - Multifactor Authentication (MFA) Attacks: phases/phase-03-multifactor-authentication-mfa-attacks.md
   - Phase 4 - MFA Enrollment and Recovery Vulnerabilities: phases/phase-04-mfa-enrollment-and-recovery-vulnerabilities.md
   - Phase 5 - Passkeys, WebAuthn, and FIDO2: phases/phase-05-passkeys-webauthn-and-fido2.md
+  - Phase 6 - Cookie and Session Security: phases/phase-06-cookie-and-session-security.md
