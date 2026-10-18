@@ -28,8 +28,8 @@ Every phase ends with an **Assessment** section. Each question is followed by a 
 | 12 | [Authentication Information Leakage](phases/phase-12-authentication-information-leakage.md) | Complete |
 | 13 | [Legacy Authentication Security](phases/phase-13-legacy-authentication-security.md) | Complete |
 | 14 | [Federated Logout and Identity Persistence](phases/phase-14-federated-logout-and-identity-persistence.md) | Complete |
-| 15 | Authentication Logging and Monitoring | In progress |
-| 16 | Authentication Cryptographic Failures | Not started |
+| 15 | [Authentication Logging and Monitoring](phases/phase-15-authentication-logging-and-monitoring.md) | Complete |
+| 16 | Authentication Cryptographic Failures | In progress |
 | 17 | Authentication-Adjacent Authorization Flaws | Not started |
 
 This table, and the navigation on the left, will be replaced by the full curriculum index once every phase is complete.
