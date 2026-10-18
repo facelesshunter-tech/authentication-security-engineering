@@ -49,3 +49,4 @@ nav:
   - Phase 5 - Passkeys, WebAuthn, and FIDO2: phases/phase-05-passkeys-webauthn-and-fido2.md
   - Phase 6 - Cookie and Session Security: phases/phase-06-cookie-and-session-security.md
   - Phase 7 - OAuth 2.0 and OpenID Connect Security: phases/phase-07-oauth-2-0-and-openid-connect-security.md
+  - Phase 8 - Account Lifecycle and Identity Proofing: phases/phase-08-account-lifecycle-and-identity-proofing.md
