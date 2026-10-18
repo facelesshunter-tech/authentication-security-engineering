@@ -57,3 +57,4 @@ nav:
   - Phase 13 - Legacy Authentication Security: phases/phase-13-legacy-authentication-security.md
   - Phase 14 - Federated Logout and Identity Persistence: phases/phase-14-federated-logout-and-identity-persistence.md
   - Phase 15 - Authentication Logging and Monitoring: phases/phase-15-authentication-logging-and-monitoring.md
+  - Phase 16 - Authentication Cryptographic Failures: phases/phase-16-authentication-cryptographic-failures.md
