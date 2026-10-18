@@ -25,8 +25,8 @@ Every phase ends with an **Assessment** section. Each question is followed by a 
 | 9 | [Reauthentication and Step-Up Authentication](phases/phase-09-reauthentication-and-step-up-authentication.md) | Complete |
 | 10 | [SAML Security](phases/phase-10-saml-security.md) | Complete |
 | 11 | [Multi-Tenant Identity Isolation](phases/phase-11-multi-tenant-identity-isolation.md) | Complete |
-| 12 | Authentication Information Leakage | In progress |
-| 13 | Legacy Authentication Security | Not started |
+| 12 | [Authentication Information Leakage](phases/phase-12-authentication-information-leakage.md) | Complete |
+| 13 | Legacy Authentication Security | In progress |
 | 14 | Federated Logout and Identity Persistence | Not started |
 | 15 | Authentication Logging and Monitoring | Not started |
 | 16 | Authentication Cryptographic Failures | Not started |
