@@ -10,6 +10,8 @@ Work through the phases in order. Later phases build on vocabulary and principle
 
 Every phase ends with an **Assessment** section. Each question is followed by a collapsed **Reveal Answer** block, work through the question yourself first, then click to check your reasoning against the answer.
 
+Every page also includes an optional read-aloud control, the speaker icon in the bottom right corner. It narrates the page using your browser's own text to speech and highlights each word as it is spoken, which can make dense technical material easier to follow. It is off by default, nothing is sent to a server, and you can adjust the speed and voice or click any paragraph to start reading from that point.
+
 ## Course progress
 
 | Phase | Title | Status |

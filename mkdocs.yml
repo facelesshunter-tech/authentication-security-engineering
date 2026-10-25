@@ -40,6 +40,9 @@ plugins:
 extra_css:
   - stylesheets/extra.css
 
+extra_javascript:
+  - javascripts/tts.js
+
 nav:
   - Home: index.md
   - Phase 1 - Password Storage and Credential Attacks: phases/phase-01-password-storage-and-credential-attacks.md
