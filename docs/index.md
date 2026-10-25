@@ -30,6 +30,6 @@ Every phase ends with an **Assessment** section. Each question is followed by a 
 | 14 | [Federated Logout and Identity Persistence](phases/phase-14-federated-logout-and-identity-persistence.md) | Complete |
 | 15 | [Authentication Logging and Monitoring](phases/phase-15-authentication-logging-and-monitoring.md) | Complete |
 | 16 | [Authentication Cryptographic Failures](phases/phase-16-authentication-cryptographic-failures.md) | Complete |
-| 17 | Authentication-Adjacent Authorization Flaws | In progress |
+| 17 | [Authentication-Adjacent Authorization Flaws](phases/phase-17-authentication-adjacent-authorization-flaws.md) | Complete |
 
-This table, and the navigation on the left, will be replaced by the full curriculum index once every phase is complete.
+All seventeen phases are complete. This table, and the navigation on the left, will be replaced by the full curriculum index.
